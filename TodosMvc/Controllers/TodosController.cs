@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TodosMvc.Models;
+using TodosMvc.Models.ViewModels;
 
 namespace TodosMvc.Controllers
 {
@@ -22,18 +23,30 @@ namespace TodosMvc.Controllers
         }
 
         public IActionResult Create()
-        {
-            ViewData["CreateTodo"] = new SelectList(_context.Todos, "Id", "Title");
-             
+        {             
             return View();
         }
 
-        //[HttpPost]
-        //public IActionResult Create()
-        //{
-        //    ViewData["CreateTodo"] = new SelectList(_context.Todos, "Id", "Title");
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(TodoVM model)
+        {
+            if (ModelState.IsValid)
+            {
+                var todo = new Todo
+                {
+                    Title = model.Title,
+                    Description = model.Description,
+                    Duedate = model.DueDate,
+                    Createdat = DateTime.Now,
+                    Status = model.Status,
+                    Userid = 3
+                };
+                _context.Todos.Add(todo);
+                _context.SaveChanges();
+            }
 
-        //    return View();
-        //}
+            return View(model);
+        }
     }
 }

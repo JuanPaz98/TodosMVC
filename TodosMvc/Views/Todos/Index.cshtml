@@ -1,5 +1,9 @@
 ﻿@model List<Todo>
 
+@{
+	<a class="nav-link text-dark" asp-area="" asp-controller="Todos" asp-action="Create">Create</a>
+}
+
 <h1>Todos</h1>
 
 @foreach (var todo in Model)
