@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TodosMvc.Models;
+using TodosMvc.Models.Enums;
 using TodosMvc.Models.ViewModels;
 
 namespace TodosMvc.Controllers
@@ -29,7 +30,7 @@ namespace TodosMvc.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(TodoVM model)
+        public async Task<IActionResult> Create(TodoVM model)
         {
             if (ModelState.IsValid)
             {
@@ -39,14 +40,19 @@ namespace TodosMvc.Controllers
                     Description = model.Description,
                     Duedate = model.DueDate,
                     Createdat = DateTime.Now,
-                    Status = model.Status,
+                    Status = model.Status.ToString(),
                     Userid = 3
                 };
                 _context.Todos.Add(todo);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction("Index");
             }
 
             return View(model);
         }
-    }
-}
+    };
+
+};
+
+   

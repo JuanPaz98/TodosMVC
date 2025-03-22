@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using TodosMvc.Models.Enums;
 
 namespace TodosMvc.Models;
 
@@ -10,8 +12,8 @@ public partial class Todo
     public string? Title { get; set; }
 
     public string? Description { get; set; }
-
-    public string? Status { get; set; }
+    [EnumDataType(typeof(TodoStatus))]
+    public string Status { get; set; } = TodoStatus.Pending.ToString();
 
     public DateTime? Duedate { get; set; }
 

@@ -1,14 +1,16 @@
 ﻿@model List<Todo>
 
 @{
-	<a class="nav-link text-dark" asp-area="" asp-controller="Todos" asp-action="Create">Create</a>
+	<a asp-area="" asp-controller="Todos" asp-action="Create">Create</a>
 }
 
 <h1>Todos</h1>
 
 @foreach (var todo in Model)
 {
-	<h2>@todo.Title</h2>
+	<ul>
+		<li>@todo.Title - @todo.Status</li>
+	</ul>
 }
 
 

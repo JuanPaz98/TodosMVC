@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using TodosMvc.Models.Enums;
 
 namespace TodosMvc.Models.ViewModels
 {
@@ -11,6 +12,6 @@ namespace TodosMvc.Models.ViewModels
         [DataType(DataType.Date)]
         public DateTime DueDate { get; set; }
         [Required]
-        public string Status {  get; set; }
+        public TodoStatus Status { get; set; } = TodoStatus.Pending;
     }
 }
