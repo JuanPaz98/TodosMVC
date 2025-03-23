@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TodosMvc.Models;
-using TodosMvc.Models.Enums;
 using TodosMvc.Models.ViewModels;
 
 namespace TodosMvc.Controllers
 {
+    [Authorize]
     public class TodosController : Controller
     {
         private readonly TodosContext _context;
@@ -24,7 +24,7 @@ namespace TodosMvc.Controllers
         }
 
         public IActionResult Create()
-        {             
+        {
             return View();
         }
 
@@ -55,4 +55,4 @@ namespace TodosMvc.Controllers
 
 };
 
-   
+

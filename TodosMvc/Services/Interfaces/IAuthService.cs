@@ -4,7 +4,8 @@ namespace TodosMvc.Services.Interfaces
 {
     public interface IAuthService
     {
-        Task<string> GenerateJwtToken(LoginVm model);
-        Task LogoutAsync();
+        public string GenerateJwtToken(LoginVm model);
+        public void StoreJwtInCookie(string token);
+        public void LogoutAsync();
     }
 }

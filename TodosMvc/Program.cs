@@ -15,6 +15,7 @@ var key = Encoding.UTF8.GetBytes(jwtConfig["Key"] ?? "");
 
 
 // Add services to the container.
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthentication(opt =>
 {
     opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

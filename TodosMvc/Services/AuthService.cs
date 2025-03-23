@@ -1,7 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using TodosMvc.Models.ViewModels;
 using TodosMvc.Services.Interfaces;
@@ -11,13 +10,15 @@ namespace TodosMvc.Services
     public class AuthService : IAuthService
     {
         private readonly IConfiguration _configuration;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AuthService(IConfiguration configuration)
+        public AuthService(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _configuration = configuration;
+            _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<string> GenerateJwtToken(LoginVm model)
+        public string GenerateJwtToken(LoginVm model)
         {
             var jwtConfig = _configuration.GetSection("Jwt");
             var key = Encoding.UTF8.GetBytes(jwtConfig["Key"]);
@@ -27,6 +28,8 @@ namespace TodosMvc.Services
             {
                 new Claim(JwtRegisteredClaimNames.Sub, model.Username),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Aud, _configuration["Jwt:Audience"]),
+                new Claim(JwtRegisteredClaimNames.Iss, _configuration["Jwt:Issuer"])
             };
 
             var token = new JwtSecurityToken(
@@ -40,10 +43,28 @@ namespace TodosMvc.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public Task LogoutAsync()
+        public void StoreJwtInCookie(string token)
         {
-            throw new NotImplementedException();
+            var context = _httpContextAccessor.HttpContext;
+            if (context == null) return;
+
+            context.Response.Cookies.Append("AuthToken", token, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTime.UtcNow.AddHours(1)
+            });
         }
 
+        public void LogoutAsync()
+        {
+            var httpContext = _httpContextAccessor.HttpContext;
+
+            if (httpContext != null)
+            {
+                httpContext.Response.Cookies.Delete("AuthToken");
+            }
+        }
     }
 }
