@@ -44,6 +44,7 @@ namespace TodosMvc.Controllers
             }
 
             var token = _authService.GenerateJwtToken(model);
+
             if (string.IsNullOrEmpty(token))
             {
                 ViewBag.Error = "Failed to generate authentication token";

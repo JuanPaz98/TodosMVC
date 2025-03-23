@@ -1,12 +1,92 @@
 ﻿@model List<Todo>
 
-<h1>Todos</h1>
+<h3>Hello @User.Identity.Name!</h3>
+<h4 class="mb-3">Your Todo List</h4>
 
-@foreach (var todo in Model)
-{
-	<ul>
-		<li>@todo.Title - @todo.Status</li>
-	</ul>
-}
+<div class="container-fluid">
+    <div class="list-group">
+        @foreach (var todo in Model)
+        {
+            var modalId = $"updateModal-{todo.Todoid}";
+
+            <div class="list-group-item list-group-item-action" aria-current="false">
+                <div class="d-flex w-100 align-items-center">
+                    <input class="form-check-input me-3" type="checkbox" />
+                    <h5 class="mb-1 text-start flex-grow-0" style="min-width: 150px; max-width: 250px; overflow: hidden;">
+                        @todo.Title
+                    </h5>
+                    <small class="text-nowrap ms-auto" style="text-align: start;">@todo.Description</small>
+                    <div class="ms-auto me-2">
+                        <span class="badge bg-warning text-dark rounded-pill">Pending</span>
+                    </div>
+                    <button type="button" class="btn btn-light ms-3" data-bs-toggle="modal" data-bs-target="#@modalId"><i class="bi bi-pencil"></i></button>
+                    <button type="button" class="btn btn-danger ms-3"><i class="bi bi-trash-fill text-white"></i></button>
+                </div>
+
+            </div>
+
+            <div class="modal fade" id="@modalId" tabindex="-1" aria-labelledby="updateModalLabel-@todo.Todoid" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="updateModalLabel-@todo.Todoid">Edit Task: @todo.Title</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="post" asp-action="UpdateTodo" asp-controller="Todos">
+                                <input type="hidden" name="Id" value="@todo.Todoid" />
+
+                                <div class="form-group">
+                                    <label for="title-@todo.Todoid">Title</label>
+                                    <input type="text" class="form-control" id="title-@todo.Todoid" name="Title" value="@todo.Title" required />
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="description-@todo.Todoid">Description</label>
+                                    <textarea class="form-control" id="description-@todo.Todoid" name="Description" required>@todo.Description</textarea>
+                                </div>
+
+                                <div class="mt-md-3">
+                                    <button type="submit" class="btn btn-primary">Update</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
 
 
+@* <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true"> *@
+@*     <div class="modal-dialog"> *@
+@*         <div class="modal-content"> *@
+@*             <div class="modal-header"> *@
+@*                 <h5 class="modal-title" id="updateModalLabel">Task Details</h5> *@
+@*                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> *@
+@*             </div> *@
+@*             <div class="modal-body"> *@
+@*                 <form method="post"> *@
+@*                     <div class="form-group"> *@
+@*                         <label asp-for="Title">UserName</label> *@
+@*                         <input asp-for="Username" class="form-control" /> *@
+@*                         <span asp-validation-for="Username" class="text-danger"></span> *@
+@*                     </div> *@
+
+@*                     <div class="form-group"> *@
+@*                         <label asp-for="Password">Password</label> *@
+@*                         <input asp-for="Password" class="form-control" type="password" /> *@
+@*                         <span asp-validation-for="Password" class="text-danger"></span> *@
+@*                     </div> *@
+
+@*                     <div class="mt-md-3"> *@
+@*                         <button type="submit" class="btn btn-primary">Login</button> *@
+@*                         <a asp-action="Register" class="btn btn-secondary">Register</a> *@
+@*                     </div> *@
+@*                 </form> *@
+@*             </div> *@
+@*         </div> *@
+@*     </div> *@
+@* </div> *@
