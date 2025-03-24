@@ -1,0 +1,62 @@
+﻿using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
+using TodosMvc.Models;
+using TodosMvc.Models.ViewModels;
+using TodosMvc.Services.Interfaces;
+
+namespace TodosMvc.Services
+{
+    public class TodosService : ITodosService
+    {
+
+        private readonly TodosContext _context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public TodosService(TodosContext context, IHttpContextAccessor httpContextAccessor)
+        {
+            _context = context;
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        public async Task<bool> Create(TodoVM model)
+        {
+            var todo = new Todo
+            {
+                Title = model.Title,
+                Description = model.Description,
+                Duedate = model.DueDate,
+                Createdat = DateTime.Now,
+                Status = model.Status.ToString(),
+                Userid = getUserId()
+            };
+            _context.Todos.Add(todo);
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<IEnumerable<Todo>> GetTodosByUserId()
+        {
+            var userId = getUserId();
+
+            return await _context.Todos.Where(t => t.Userid == userId).ToListAsync();
+        }
+
+        private int getUserId()
+        {
+            var userClaim = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (userClaim == null)
+            {
+                throw new InvalidOperationException("User is not authenticated.");
+            }
+
+            var user = _context.Users.FirstOrDefault(u => u.Username == userClaim);
+
+            if (user == null)
+            {
+                throw new InvalidOperationException("User not found.");
+            }
+
+            return user.Id;
+        }
+    }
+}

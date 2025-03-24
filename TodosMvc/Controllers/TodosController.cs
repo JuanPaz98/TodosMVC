@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TodosMvc.Models;
 using TodosMvc.Models.ViewModels;
+using TodosMvc.Services.Interfaces;
 
 namespace TodosMvc.Controllers
 {
@@ -10,15 +11,17 @@ namespace TodosMvc.Controllers
     public class TodosController : Controller
     {
         private readonly TodosContext _context;
+        private readonly ITodosService _todosService;
 
-        public TodosController(TodosContext context)
+        public TodosController(TodosContext context, ITodosService todosService)
         {
             _context = context;
+            _todosService = todosService;
         }
 
         public async Task<IActionResult> Index()
         {
-            var todos = await _context.Todos.ToListAsync();
+            var todos = await _todosService.GetTodosByUserId();
 
             return View(todos);
         }
@@ -42,17 +45,7 @@ namespace TodosMvc.Controllers
         {
             if (ModelState.IsValid)
             {
-                var todo = new Todo
-                {
-                    Title = model.Title,
-                    Description = model.Description,
-                    Duedate = model.DueDate,
-                    Createdat = DateTime.Now,
-                    Status = model.Status.ToString(),
-                    Userid = 3
-                };
-                _context.Todos.Add(todo);
-                await _context.SaveChangesAsync();
+                var result = await _todosService.Create(model);
 
                 return RedirectToAction("Index");
             }
