@@ -27,7 +27,7 @@ namespace TodosMvc.Services
                 Duedate = model.DueDate,
                 Createdat = DateTime.Now,
                 Status = model.Status.ToString(),
-                Userid = getUserId()
+                Userid = GetUserId()
             };
             _context.Todos.Add(todo);
             return await _context.SaveChangesAsync() > 0;
@@ -35,7 +35,7 @@ namespace TodosMvc.Services
 
         public async Task<IEnumerable<Todo>> GetTodosByUserId()
         {
-            var userId = getUserId();
+            var userId = GetUserId();
 
             return await _context.Todos.Where(t => t.Userid == userId).ToListAsync();
         }
@@ -55,7 +55,7 @@ namespace TodosMvc.Services
             return await _context.SaveChangesAsync() > 0;
         }
 
-        private int getUserId()
+        private int GetUserId()
         {
             var userClaim = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
