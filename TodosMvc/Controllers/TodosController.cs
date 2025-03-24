@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using TodosMvc.Models;
 using TodosMvc.Models.ViewModels;
 using TodosMvc.Services.Interfaces;
@@ -33,7 +32,7 @@ namespace TodosMvc.Controllers
 
         public async Task<IActionResult> CompletedTodos()
         {
-            var todos = await _context.Todos.ToListAsync();
+            var todos = await _todosService.GetCompletedTodos();
 
             return View(todos);
         }
@@ -57,7 +56,7 @@ namespace TodosMvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Update(Todo model)
         {
-            
+
             if (ModelState.IsValid)
             {
                 await _todosService.Update(model);
@@ -65,6 +64,26 @@ namespace TodosMvc.Controllers
                 return RedirectToAction("Index");
             }
 
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateStatus(int todoId)
+        {
+            if (ModelState.IsValid)
+            {
+                await _todosService.UpdateStatus(todoId);
+                return RedirectToAction("Index");
+            }
+
+            return RedirectToAction("Index");
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(int TodoId)
+        {
+            await _todosService.Delete(TodoId);
             return RedirectToAction("Index");
         }
 

@@ -7,9 +7,16 @@
     <div class="list-group">
         @foreach (var todo in Model)
         {
-            <div class="list-group-item list-group-item-action" aria-current="false">
+            <div class="list-group-item list-group-item-action">
                 <div class="d-flex w-100 align-items-center">
-                    <input class="form-check-input me-3" type="checkbox" checked/>
+                    <form method="post" asp-action="UpdateStatus" asp-controller="Todos">
+                        <input type="hidden" name="TodoId" value="@todo.Todoid" />
+
+                        <input type="checkbox" class="form-check-input me-3"
+                               name="Status"
+                               checked
+                               onchange="this.form.submit();" />
+                    </form>
                     <h5 class="mb-1 text-start flex-grow-0 text-decoration-line-through" style="min-width: 150px; max-width: 250px; overflow: hidden;">
                         @todo.Title
                     </h5>
@@ -17,7 +24,13 @@
                     <div class="ms-auto me-2">
                         <span class="badge bg-success text-dark rounded-pill">Completed</span>
                     </div>
-                    <button type="button" class="btn btn-danger ms-3"><i class="bi bi-trash-fill text-white"></i></button>
+
+                    <form method="post" asp-action="Delete" asp-controller="Todos" class="ms-3">
+                        <input type="hidden" name="TodoId" value="@todo.Todoid" />
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure?');">
+                            <i class="bi bi-trash-fill text-white"></i>
+                        </button>
+                    </form>
                 </div>
 
             </div>
