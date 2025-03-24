@@ -36,23 +36,23 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <form method="post" asp-action="UpdateTodo" asp-controller="Todos">
-                                <input type="hidden" name="Id" value="@todo.Todoid" />
+                            <form method="post" asp-action="Update" asp-controller="Todos">
+                                <input type="hidden" name="Todoid" value="@todo.Todoid" />
 
                                 <div class="form-group">
                                     <label for="title-@todo.Todoid">Title</label>
-                                    <input type="text" class="form-control" id="title-@todo.Todoid" name="Title" value="@todo.Title" required />
+                                    <input type="text" class="form-control" id="title-@todo.Todoid" name="Title" value="@todo.Title" />
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="deadline-@todo.Duedate">DeadLine</label>
+                                    <label for="deadline-@todo.Todoid">DeadLine</label>
                                     <input type="date" class="form-control" id="deadline-@todo.Todoid" name="Duedate"
-                                           value="@todo.Duedate?.ToString("yyyy-MM-dd")" required />
+                                           value="@todo.Duedate?.ToString("yyyy-MM-dd")" />
                                 </div>
 
                                 <div class="form-group">
                                     <label for="description-@todo.Todoid">Description</label>
-                                    <textarea class="form-control" id="description-@todo.Todoid" name="Description" required>@todo.Description</textarea>
+                                    <textarea class="form-control" id="description-@todo.Todoid" name="Description">@todo.Description</textarea>
                                 </div>
 
 

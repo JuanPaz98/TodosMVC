@@ -7,5 +7,7 @@ namespace TodosMvc.Services.Interfaces
     {
         public Task<IEnumerable<Todo>> GetTodosByUserId();
         public Task<bool> Create(TodoVM model);
+
+        public Task<bool> Update(Todo model);
     }
 }

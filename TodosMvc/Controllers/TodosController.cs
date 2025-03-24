@@ -54,19 +54,17 @@ namespace TodosMvc.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateTodo(Todo model)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Update(Todo model)
         {
-            var todo = await _context.Todos.FindAsync(model.Todoid);
-            if (todo == null)
+            
+            if (ModelState.IsValid)
             {
-                return NotFound();
+                await _todosService.Update(model);
+
+                return RedirectToAction("Index");
             }
 
-            todo.Title = model.Title;
-            todo.Description = model.Description;
-            todo.Duedate = model.Duedate;
-
-            await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }
 

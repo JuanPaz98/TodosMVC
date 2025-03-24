@@ -40,6 +40,21 @@ namespace TodosMvc.Services
             return await _context.Todos.Where(t => t.Userid == userId).ToListAsync();
         }
 
+        public async Task<bool> Update(Todo model)
+        {
+            var existingTodo = await _context.Todos.FindAsync(model.Todoid);
+            if (existingTodo != null)
+            {
+                existingTodo.Title = model.Title;
+                existingTodo.Description = model.Description;
+                existingTodo.Duedate = model.Duedate;
+
+                _context.Todos.Update(existingTodo);
+            }
+            
+            return await _context.SaveChangesAsync() > 0;
+        }
+
         private int getUserId()
         {
             var userClaim = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
