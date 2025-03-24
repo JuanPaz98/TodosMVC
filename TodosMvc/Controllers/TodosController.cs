@@ -28,6 +28,14 @@ namespace TodosMvc.Controllers
             return View();
         }
 
+        public async Task<IActionResult> CompletedTodos()
+        {
+            var todos = await _context.Todos.ToListAsync();
+
+            return View(todos);
+        }
+
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(TodoVM model)
@@ -51,6 +59,24 @@ namespace TodosMvc.Controllers
 
             return View(model);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateTodo(Todo model)
+        {
+            var todo = await _context.Todos.FindAsync(model.Todoid);
+            if (todo == null)
+            {
+                return NotFound();
+            }
+
+            todo.Title = model.Title;
+            todo.Description = model.Description;
+            todo.Duedate = model.Duedate;
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+
     };
 
 };

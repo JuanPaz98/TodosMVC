@@ -1,0 +1,26 @@
+﻿@model List<Todo>
+
+<div class="container-fluid p-4 border rounded shadow bg-white">
+    <div class="d-flex justify-content-between mb-3">
+        <h4>Your Tasks Completed</h4>
+    </div>
+    <div class="list-group">
+        @foreach (var todo in Model)
+        {
+            <div class="list-group-item list-group-item-action" aria-current="false">
+                <div class="d-flex w-100 align-items-center">
+                    <input class="form-check-input me-3" type="checkbox" checked/>
+                    <h5 class="mb-1 text-start flex-grow-0 text-decoration-line-through" style="min-width: 150px; max-width: 250px; overflow: hidden;">
+                        @todo.Title
+                    </h5>
+                    <small class="text-nowrap ms-auto text-decoration-line-through" style="text-align: start;">@todo.Description</small>
+                    <div class="ms-auto me-2">
+                        <span class="badge bg-success text-dark rounded-pill">Completed</span>
+                    </div>
+                    <button type="button" class="btn btn-danger ms-3"><i class="bi bi-trash-fill text-white"></i></button>
+                </div>
+
+            </div>
+        }
+    </div>
+</div>
