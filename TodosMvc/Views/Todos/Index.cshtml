@@ -7,75 +7,83 @@
         <h4 >Your Todo List</h4>
         <a class="btn btn-primary" asp-controller="todos" asp-action="Create"> <i class="bi bi-plus-lg text-white"></i> Add Task</a>
     </div>
-    <div class="list-group">
-        @foreach (var todo in Model)
-        {
-            var modalId = $"updateModal-{todo.Todoid}";
+    @if(Model.Count > 0)
+    {   
+        <div class="list-group">
+            @foreach (var todo in Model)
+            {
+                var modalId = $"updateModal-{todo.Todoid}";
 
-            <div class="list-group-item list-group-item-action" aria-current="false">
-                <div class="d-flex w-100 align-items-center">
-                    <form method="post" asp-action="UpdateStatus" asp-controller="Todos">
-                        <input type="hidden" name="TodoId" value="@todo.Todoid" />
+                <div class="list-group-item list-group-item-action" aria-current="false">
+                    <div class="d-flex w-100 align-items-center">
+                        <form method="post" asp-action="UpdateStatus" asp-controller="Todos">
+                            <input type="hidden" name="TodoId" value="@todo.Todoid" />
 
-                        <input type="checkbox" class="form-check-input me-3"
-                               name="Status"
-                               onchange="this.form.submit();" />
-                    </form>
-                    <h5 class="mb-1 text-start flex-grow-0" style="min-width: 150px; max-width: 250px; overflow: hidden;">
-                        @todo.Title
-                    </h5>
-                    <small class="text-nowrap ms-auto" style="text-align: start;">@todo.Description</small>
-                    <div class="ms-auto me-2">
-                        <span class="badge bg-warning text-dark rounded-pill">Pending</span>
+                            <input type="checkbox" class="form-check-input me-3"
+                                   name="Status"
+                                   onchange="this.form.submit();" />
+                        </form>
+                        <h5 class="mb-1 text-start flex-grow-0" style="min-width: 150px; max-width: 250px; overflow: hidden;">
+                            @todo.Title
+                        </h5>
+                        <small class="text-nowrap ms-auto" style="text-align: start;">@todo.Description</small>
+                        <div class="ms-auto me-2">
+                            <span class="badge bg-warning text-dark rounded-pill">Pending</span>
+                        </div>
+                        <button type="button" class="btn btn-light ms-3" data-bs-toggle="modal" data-bs-target="#@modalId"><i class="bi bi-pencil"></i></button>
+                        <form method="post" asp-action="Delete" asp-controller="Todos" class="ms-3">
+                            <input type="hidden" name="TodoId" value="@todo.Todoid" />
+                            <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure?');">
+                                <i class="bi bi-trash-fill text-white"></i>
+                            </button>
+                        </form>
                     </div>
-                    <button type="button" class="btn btn-light ms-3" data-bs-toggle="modal" data-bs-target="#@modalId"><i class="bi bi-pencil"></i></button>
-                    <form method="post" asp-action="Delete" asp-controller="Todos" class="ms-3">
-                        <input type="hidden" name="TodoId" value="@todo.Todoid" />
-                        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure?');">
-                            <i class="bi bi-trash-fill text-white"></i>
-                        </button>
-                    </form>
+
                 </div>
 
-            </div>
+                <div class="modal fade" id="@modalId" tabindex="-1" aria-labelledby="updateModalLabel-@todo.Todoid" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="updateModalLabel-@todo.Todoid">Edit Task: @todo.Title</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form method="post" asp-action="Update" asp-controller="Todos">
+                                    <input type="hidden" name="Todoid" value="@todo.Todoid" />
 
-            <div class="modal fade" id="@modalId" tabindex="-1" aria-labelledby="updateModalLabel-@todo.Todoid" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="updateModalLabel-@todo.Todoid">Edit Task: @todo.Title</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form method="post" asp-action="Update" asp-controller="Todos">
-                                <input type="hidden" name="Todoid" value="@todo.Todoid" />
+                                    <div class="form-group">
+                                        <label for="title-@todo.Todoid">Title</label>
+                                        <input type="text" class="form-control" id="title-@todo.Todoid" name="Title" value="@todo.Title" />
+                                    </div>
 
-                                <div class="form-group">
-                                    <label for="title-@todo.Todoid">Title</label>
-                                    <input type="text" class="form-control" id="title-@todo.Todoid" name="Title" value="@todo.Title" />
-                                </div>
+                                    <div class="form-group">
+                                        <label for="deadline-@todo.Todoid">DeadLine</label>
+                                        <input type="date" class="form-control" id="deadline-@todo.Todoid" name="Duedate"
+                                               value="@todo.Duedate?.ToString("yyyy-MM-dd")" />
+                                    </div>
 
-                                <div class="form-group">
-                                    <label for="deadline-@todo.Todoid">DeadLine</label>
-                                    <input type="date" class="form-control" id="deadline-@todo.Todoid" name="Duedate"
-                                           value="@todo.Duedate?.ToString("yyyy-MM-dd")" />
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="description-@todo.Todoid">Description</label>
-                                    <textarea class="form-control" id="description-@todo.Todoid" name="Description">@todo.Description</textarea>
-                                </div>
+                                    <div class="form-group">
+                                        <label for="description-@todo.Todoid">Description</label>
+                                        <textarea class="form-control" id="description-@todo.Todoid" name="Description">@todo.Description</textarea>
+                                    </div>
 
 
-                                <div class="mt-md-3">
-                                    <button type="submit" class="btn btn-primary">Update</button>
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                </div>
-                            </form>
+                                    <div class="mt-md-3">
+                                        <button type="submit" class="btn btn-primary">Update</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        }
-    </div>
+            }
+        </div>
+    } else {
+        <div class="d-flex justify-content-center align-items-center flex-column" style="height: 40vh">
+            <i class="bi bi-journal-text fs-1 me-2"></i>
+            <h5>Create your First Task!</h5>
+        </div>
+    }
 </div>
