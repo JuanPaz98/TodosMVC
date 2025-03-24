@@ -2,6 +2,7 @@
 @model LoginVm
 
 
+
 <div class="d-flex justify-content-center align-items-center" style="height: 80vh">
     <div class="w-100" style="max-width: 400px;">
         <form class="p-4 border rounded shadow bg-white" method="post">
@@ -23,5 +24,13 @@
                 <a asp-action="Register" class="btn btn-secondary">Register</a>
             </div>
         </form>
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
     </div>
 </div>

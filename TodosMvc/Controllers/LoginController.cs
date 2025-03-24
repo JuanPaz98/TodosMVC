@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TodosMvc.Models;
 using TodosMvc.Models.ViewModels;
@@ -39,7 +37,7 @@ namespace TodosMvc.Controllers
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == model.Username);
             if (user == null || !BCrypt.Net.BCrypt.Verify(model.Password, user.Passwordhash))
             {
-                ViewBag.Error = "User or Password are incorrect";
+                ModelState.AddModelError("", "Invalid username or password.");
                 return View(model);
             }
 
