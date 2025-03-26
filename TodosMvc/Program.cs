@@ -5,6 +5,9 @@ using Microsoft.IdentityModel.Tokens;
 using TodosMvc.Models;
 using TodosMvc.Services.Interfaces;
 using TodosMvc.Services;
+using Azure.Identity;
+using Microsoft.Extensions.Configuration.AzureKeyVault;
+using Azure.Security.KeyVault.Secrets;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,8 +16,6 @@ builder.Configuration.AddUserSecrets<Program>();
 var jwtConfig = builder.Configuration.GetSection("Jwt");
 var key = Encoding.UTF8.GetBytes(jwtConfig["Key"] ?? "");
 
-
-// Add services to the container.
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthentication(opt =>
 {
@@ -43,8 +44,28 @@ builder.Services.AddAuthentication(opt =>
 });
 
 builder.Services.AddControllersWithViews();
-builder.Services.AddDbContext<TodosContext>(options =>
+
+if (builder.Environment.IsDevelopment())
+{
+    var keyvaultUrl = builder.Configuration.GetSection("Keyvault:KeyVaultUrl");
+    var keyvaultClient = Environment.GetEnvironmentVariable("AZURE_CLIENT_ID", EnvironmentVariableTarget.User);
+    var keyvaultClientSecret = Environment.GetEnvironmentVariable("AZURE_CLIENT_SECRET", EnvironmentVariableTarget.User);
+    var keyvaultDirectoryId = Environment.GetEnvironmentVariable("AZURE_TENANT_ID", EnvironmentVariableTarget.User);
+
+    var credential = new ClientSecretCredential(keyvaultDirectoryId, keyvaultClient, keyvaultClientSecret);
+
+    var client = new SecretClient(new Uri(keyvaultUrl.Value!), credential);
+
+    builder.Services.AddDbContext<TodosContext>(options =>
+    options.UseSqlServer(client.GetSecret("TodosDBConnection").Value.Value.ToString()));
+}
+
+if (builder.Environment.IsProduction())
+{
+    builder.Services.AddDbContext<TodosContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+}   
+
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITodosService, TodosService>();
